@@ -1,0 +1,1060 @@
+                                                             Page 1
+                         COSMIC documentation for LOOK
+
+
+
+
+                                   ABSTRACT
+                                   --------
+
+                      LOOK  is a program that allows a user
+                   to examine a text file on a CRT terminal
+                   in  a psuedo-random access manner.  The
+                   program  is designed to run on a DEC-VAX
+                   system  running VAX/VMS as an operating
+                   system.   It allows rapid access to and
+                   display  of  any  part of a text file,
+                   regardless of the size of that file.  The
+                   program  also supports such features as
+                   string  searches,  on-line  help, user
+                   definable keys, extraction of portions of
+                   the  text,  and  the ability to spawn
+                   sub-processes  in  order  to do things
+                   without exiting the program.
+
+
+
+                          PROBLEM/FUNCTION DEFINITION
+                          ---------------------------
+
+              We  had  been  using an IBM 370 computer to run data
+         reduction  jobs in a batch oriented fashion.  The 370 system
+         included several high speed printers and no true interactive
+         access  (submission  of jobs was done through card decks).
+         Much  of our software was written with this configuration in
+         mind.   This resulted in programs that created large amounts
+         of printed output.  This output then had to be examined in a
+         few places, with (usually) the vast majority of the paper not
+         needed for later reference.
+
+              This arrangement worked fine as long as we were using a
+         machine  based  upon  batch job submissions.  However, we,
+         aquired  a VAX-11 780 for our use, with the idea of using a
+         more interactive form of processing.  This VAX system had no
+         high  speed  printers,  but there were remote terminals in
+         almost every office.  We still used the software from the IBM
+         370,  as  it was transferable to the VAX with virtually no
+         modifications.    In sum, we now had the situation of large
+         output  files  with virtually no convenient way to look at
+         them.
+
+              Users  had two options for examing the large amounts of
+         output  that  were created.  Some printed it out, creating
+         bottle-necks in the print queues, and much frustration.  Some
+         started  to use a text editor to examine their output.  The
+         slowness of moving from one place to another in the file, the
+         possibility  of inadvertently changing the output, and other
+         factors  also  made  this a very unsatisfactory solution.
+
+                                                             Page 2
+                         COSMIC documentation for LOOK
+
+
+
+
+         With this in mind a program (LOOK) was developed which would
+         allow  the the examination of the contents of an ASCII text
+         file.  The program had to meet the following goals:
+
+              1) Rapid movement from one place to another in the
+                 file.
+
+              2) Forward or backward string searches.
+
+              3) Forward or backward scrolling of text.
+
+              4) User definable commands.
+
+              5) The ability to extract protions of text directly
+                 to a printer, or into a (different) file.
+
+              6) Protection  against inadvertant modification of
+                 the original input file.
+
+              7) Terminal  independence, but with provisions for
+                 using  the features of DEC VT100 terminals (the
+                 132 column screen display in particular).
+
+                                                             Page 3
+                         COSMIC documentation for LOOK
+
+
+
+
+                              METHOD OF SOLUTION
+                              ------------------
+
+              The basis of the program's operation is to open the text
+         file  for  input  only and then access it in a block-wise
+         fashion, rather than through records.  After getting several
+         blocks  of input the first start of record is found and text
+         formatting  under  taken from that point.  The advantage of
+         this  method is that the I/O system allows for a given block
+         of a file to be accessed randomly (i.e. without accessing any
+         of the other blocks of that file).
+
+              Text  formatting  is the process of taking a stream of
+         bytes (the input blocks) and creating text lines suitable for
+         output  to the terminal screen.  First the start of a record
+         must  be found.  If the file is formatted with fixed length
+         records  this  is easily done with a calculation, or if the
+         file  does  not allow spanning of records across blocks it
+         would  simply  be the start of a block.  A variable record
+         length file with block spanning records is the worst case.
+
+              In such a situation the program will scan the stream for
+         a  word  (2  bytes) record length count (FILES-11 variable
+         length  records have a 2 byte length followed by the actual
+         record) with a value of less than 256.  If this value points
+         to  another such word then it is assumed to be a legitimate
+         start  of record.  This procedure works in almost all cases
+         (in  those cases where it fails the user can move forward or
+         backward one block and try again).
+
+              The  text lines once created are output on the screen.
+         Due consideration is given for FORTRAN carriage control (with
+         the  exception  of  the  + specifier) or internal printer
+         line-feed  control  characters.  The user at this point can
+         move  forward  or backward in the file by a given amount of
+         lines  or  (disk)  blocks.  A move by an amount of blocks
+         repeats  the text formatting process from scratch, whereas a
+         movement by lines has the text formatted using the start (or
+         end) of records as already defined by the formatted data.
+
+              Also  provided  is the ability to "scroll" the text at
+         various  speeds in either the forward or backward direction.
+         Using  this  facility, provision has been included to allow
+         adjustment of the scroll rate to match reading speed.
+
+              Another  form of movement is a search for a string (or
+         combination  of  up  to 10 strings) in either a forward or
+         backward direction.  This is also accomplished at a rate that
+         is faster than the editors it has been measured against (EDT
+         and SOS).
+
+              The  last  operation  that  can be performed is the
+         extraction of a portion of text.  Such extracted text can be
+         either  submitted  to the printer, or placed in a file.  If
+
+                                                             Page 4
+                         COSMIC documentation for LOOK
+
+
+
+
+         placed  in  a  file  the user has the option of appending
+         different  extractions  together,  or of creating seperate
+         files.
+
+              To  enable ease of use the following functions are also
+         available:
+
+              1) Cancelation of an operation with a keystroke.
+
+              2) Ability  to define a given key as a combination
+                 of  the  above  primitive  operations (or a
+                 combination of previously defined keys).
+
+              3)  Ability to store such definitions in a file to
+                 be  invoked  at startup, or invoked internally
+                 during execution of the program.
+
+              4)  Ability  to examine what key definitions have
+                 been made.
+
+              5)  Ability  to switch between modes of operation
+                 (80/132 column display, etc.).
+
+              6) An on-line help facility.
+
+              7) Trapping of broadcast messages, so that they do
+                 not disrupt the screen and can still be read at
+                 a later (more convenient) time.
+
+              8) Ability to spawn a sub-process to carry out DCL
+                 functions without leaving the running program.
+
+                                                             Page 5
+                         COSMIC documentation for LOOK
+
+
+
+
+                               USER INSTRUCTIONS
+                               -----------------
+
+         Program Startup
+         ---------------
+
+              When  run the program will examine the command line for
+         imput.   If there is nothing on the command line the prompt
+         "Filename: "  will be issued.  Input consists of the name of
+         the  file to be examined and any combination (including the
+         inclusion of no switch) of the following switches:
+
+                /NARROW
+                   This  switch  puts the terminal into an
+                   80-column  wide mode, as opposed to the
+                   default 132 column-wide mode (the switch
+                   has no affect on non VT100 terminals, in
+                   which  case  80-column  mode is always
+                   used).
+
+                /WRAP
+                   This switch causes lines that are longer
+                   than the width of the terminal (80 or 132
+                   characters)  to be wrapped around to the
+                   next  display  line.  The default is to
+                   truncate any such lines.
+
+                /BOX
+                   This  switch  causes  one line of the
+                   display to be sacrificed for the purposes
+                   of  drawing  a  line  to  divide the
+                   (displayed)  file text from the command
+                   input line.
+
+                /DEFINITIONS=filename
+                   This switch causes the file specification
+                   supplied  to  be  used as the command
+                   definition  input file (see below).  If
+                   not specified the program will search for
+                   a file named LOOKCOM.DAT that is owned by
+                   the  current user and located in: A) The
+                   current  default  directory,  or B) A
+                   directory  consisting  of  the current
+                   user's  username  on  disks  with the
+                   following  logical  names JPL, CIT, and
+                   SYS2  (in that order)(the logical names
+                   used    can be changed, see below).  If
+                   found  this  file  will be used as the
+                   command  definition input file.  If not
+                   found, no file will be used.
+
+
+              The  program  has two operating modes.  These are the
+         "look"  mode in which text can be viewed.  And the "command"
+
+                                                             Page 6
+                         COSMIC documentation for LOOK
+
+
+
+
+         mode, which allows the entering of non-text viewing commands
+         (such  as  HELP, defining symbols, etc.).  Although the two
+         modes  are distinct, the user can easily change from one to
+         the other.  The program will begin in "look" mode.
+
+                                                             Page 7
+                         COSMIC documentation for LOOK
+
+
+
+
+         "Look" mode
+         -----------
+
+              When  the program is being run in "look" mode a display
+         of 23 (22 if /BOX is specified, see above) lines of the given
+         file  will  be shown on the terminal.  Below this will be a
+         line containing (from left to right):
+
+              The prompt "Command: ".  This is the input prompt, user
+                 input will be echoed following this.
+
+              Any  message about a search string not being found (if
+                 the previous operation was a search).
+
+              The  flashing word "WORKING" if a command is currently
+                 being executed.
+
+              The  (file)  block number of the start of the current
+                 display.    This is useful in returning to a given
+                 location in the file.
+
+         In  addition if a broadcast message is received the terminal
+         bell will be rung and the word MESSAGES will be displayed on
+         this (bottom) line.  On a VT100 these items will be displayed
+         in reverse video.
+
+              In answer to the "Command: " prompt the user can type a
+         command  string.    This string consists of one character
+         commands (either the primitives or those defined by the user)
+         search  strings, and/or repitition counts.  Also, whenever a
+         control-Z (^Z) is typed the user will be placed in "command"
+         mode (see below).
+
+              The  command primitives are given below.  n refers to a
+         positive or negative integer, and ssss refers to a string of
+         ASCII characters.
+
+              n$      - Jump  by  n lines from the current
+                        location in the file.
+
+              n%      - Jump  by n blocks from the current
+                        location in the file.  These blocks
+                        refer  to the same size objects as
+                        shown  by  the block number on the
+                        command line.
+
+              ^       - Search  for  the string(s) in the
+                        search  buffer  (the search buffer
+                        will  hold  up  to  10 different
+                        strings) and display from that line
+                        (it  will  be the top line of the
+                        display)  if any of the strings are
+                        found.    If  not found ring the
+                        terminal  bell  and, if a VT100 is
+
+                                                             Page 8
+                         COSMIC documentation for LOOK
+
+
+
+
+                        being used, turn on LED 3.  Matches
+                        are found regardless of the case of
+                        any  letters.  If a minus sign (-)
+                        precedes the command the search will
+                        be  backward  (towards the file's
+                        beginning),  if  not  it will be
+                        forward (towards the file's end).
+
+              "ssss"  - Clear the search buffer and put the
+                        string  ssss in it.  If a quotation
+                        mark  is needed in the string it is
+                        specified by placing two quotations
+                        marks  together ("").  For example,
+                        """HELLO"""  will place the string
+                        "HELLO" (including the quotes) into
+                        the  search buffer.  Search strings
+                        have  a  maximum  length  of 30
+                        characters.
+
+              'ssss'  - Add  the string ssss to the search
+                        buffer  (without first clearing the
+                        buffer).  If an apostrophe is needed
+                        in  the  string it is specified by
+                        placing  two  apostrophes together
+                        ('').   For example, 'DON''T' will
+                        place the string DON'T in the search
+                        buffer.    Search  strings have a
+                        maximum length of 30 characters.
+
+              !       - Toggle the reverse switch.  Whe set
+                        all  commands will work in reverse
+                        (eg.  they  will act as if the are
+                        preceded  by a minus sign).  If the
+                        reverse switch is already set, this
+                        will un-set it.
+
+              #       - Scroll the text onto the screen.  If
+                        a  minus  sign  (-) precedes the
+                        command,  scrolling  will be in a
+                        reverse direction.
+
+              (       - Stop executing the current command.
+                        Normally any terminal input received
+                        by the program while it is executing
+                        a command is buffered for later use
+                        (thus  providing  a  typeahead
+                        capability).   This command (or any
+                        user  defined command which starts
+                        with  this),  unlike the rest, is
+                        executed  upon  receipt.  If it is
+                        entered  while  no  command  is
+                        executing,  it  is  considered an
+                        invalid command.
+
+                                                             Page 9
+                         COSMIC documentation for LOOK
+
+
+
+
+              n)      - Sets the scrolling speed (# command)
+                        to  n  lines per second (n in this
+                        case  can be a real number).  This
+                        number starts at 2.  NOTE:  there is
+                        a  maximum  speed that the program
+                        cannot  exceed (this maximum varies
+                        with  the  current  situation) no
+                        matter  what this may have been set
+                        to.
+
+              n*      - Mark the nth line from the top line
+                        on the display as the beginning (or
+                        end) of a print range.  If n is not
+                        specified it defaults to 0.
+
+              n&      - Prints  n lines from the top of the
+                        screen onto device SYS$PRINT.  If n
+                        is 0 or absent then the range marked
+                        with  the  * command is output, if
+                        there  is one, otherwise 23 (22 if
+                        /BOX  is  set) is used for n.  The
+                        format of the printout will be that
+                        of  the original file, this is not
+                        necessarily  what  is shown on the
+                        screen  (i.e.  FORTRAN
+                        carriage-control,  and all printer
+                        control  will  work  as they are
+                        supposed to).
+
+              n-&     - Same  as n&, except that output is
+                        put into a file named LOOKPRINT.LIS
+                        located  in  the  current default
+                        directory  (file format will be the
+                        same  as that of the original file,
+                        except  organization  will  be
+                        sequential  if  the  original was
+                        relative).   If no previous n-& or
+                        n--&  command has been given a new
+                        file will be created.  If there has
+                        been a previous n-& or n--& command
+                        output  will  be  appended to the
+                        latest LOOKPRINT.LIS file.
+
+              n--&    - Same  as n-&, except that output is
+                        always put into a new file.
+
+              @       - Exits the program.
+
+              +       - Re-writes the display on the screen.
+
+              <       - Repeats the last executed command.
+
+                                                             Page 10
+                         COSMIC documentation for LOOK
+
+
+
+
+              If an invalid command is typed the terminal bell is rung
+         and, on a VT100, LED #3 is turned on.  No command is executed
+         until a standard line terminator is received (ASCII code of 1
+         to  31) at which time commands from the entire command line
+         are executed one by one.  Since each command is executed when
+         the  parser picks it out, if there is an error in a command
+         sequence,  all the valid commands preceding the invalid one
+         will be executed.  Command lines are limited to 34 characters
+         in  length.
+
+                                                             Page 11
+                         COSMIC documentation for LOOK
+
+
+
+
+         "Command" mode
+         --------------
+
+              In  "command"  mode (entered by typing ^Z (Control-Z)
+         whenever the program is not currently executing a command in
+         "look" mode) the user can use any of the following commands:
+
+              DEFINE s := a1 a2 ...
+                   - Define  a  symbol s (s can be any single
+                     letter  or one of the characters _, =, `,
+                     ~, [, ], {, }, ;, :, ,(comma), >, ?, /, or
+                     \)  to be the series of commands a1, a2,
+                     a3,  a4,  ...  Up to 9 commands ("look"
+                     mode)  can  be included in the list.  If
+                     more  than one line is needed, a dash (-)
+                     at  the end of a line will cause input to
+                     be  continued  on  the next line.  The
+                     commands a1, etc. can either be primitives
+                     or previously defined symbols, though the
+                     restriction  to  9  commands applies to
+                     primitives, which includes the primitives
+                     to  which a given symbol decodes.  Search
+                     strings  or  repeat  counts also can be
+                     included  freely  in  the  list.  Once
+                     defined, the given series of commands will
+                     be executed whenever the symbol is entered
+                     in the "look" mode command line.
+
+              EXIT
+                   - Return to the normal "look" mode.
+
+              HELP a
+                   - Output  (to  the  terminal) information
+                     concerning the command a.
+
+              READ
+                   - Output  the  the  text of any broadcast
+                     messages  which have been received since
+                     the last READ command.
+
+              SET [NO]switch
+                   - Set  (or  clear if NO is specified) the
+                     different  output "modes".  Switch can be
+                     any of WRAP, BOX, WIDE, or NARROW.  These
+                     have  the same affect as the command line
+                     switches  of  the same names (with WIDE
+                     being the same as NONARROW).
+
+              SHOW [s]
+                   - Output the definition of the symbol s (if
+                     s  is  omitted, all defined symbols are
+                     shown).
+
+                                                             Page 12
+                         COSMIC documentation for LOOK
+
+
+
+
+              SPAWN
+                   - Start  a sub-process to allow the user to
+                     issue DCL commands.
+
+              @filename
+                   - Input  the file filename as a definitions
+                     file.    This  file can contain either
+                     definitions  of symbols or commands to be
+                     executed.   A definition is given as for
+                     the  DEFINE command (without the keyword
+                     DEFINE).  Otherwise an input line that is
+                     enclosed in braces ({ }) will be executed
+                     as  a  "command" level command, and one
+                     without  braces  will  be executed as a
+                     normal command line.
+
+                                                             Page 13
+                         COSMIC documentation for LOOK
+
+
+
+
+         Default symbols and LED's
+         -------------------------
+
+              The  program  assumes some default symbol definitions
+         which  will  be in effect unless they are redefined by the
+         user.  These are as follows (plus the idea behind the choice
+         of character):
+              U := 23$       (short for Up)
+              D := -23$      (short for Down)
+              S := #         (short for Scroll)
+              Q := (         (short for Quit)
+              J := 20%       (short for Jump)
+              B := -20%      (short for Back)
+              P := 23&       (short for Print)
+              A := 23-&      (short for Append)
+              L := 23--&     (short for List)
+              E := @         (short for Exit)
+              M := *         (short for Mark)
+              C := +         (short for Clear)
+              R := <         (short for Repeat)
+
+              If a VT100 terminal is being used, the program will use
+         the  4 LEDs (L1-L4) to convey various bits of information to
+         the  user whe s/he is in "look" mode.  Their meanings are as
+         follows:
+
+              1 - Indicates a command is currently being executed.
+
+              2 - Indicates  that the reverse toggle is in affect (an
+                  odd number of ! commands have been executed).
+
+              3 - Indicates  an invalid command was encountered, or a
+                  search failed to find a match.
+
+              4 - Indicates  that  a range of lines has been marked,
+                  through the use of (at least) two * commands.
+
+
+              NOTE:    Due to the nature of the program's method for
+         formating  the  contents of variable length records, it is
+         possible (but not likely) for the output on the screen to be
+         incorrect.  This is usually easy to detect, because it looks
+         like  semi-random  garbage.  The solution is to try moving
+         either one block forward or backward in order to realign the
+         record  boundaries (done through a block move (%) not a line
+         move  ($)).
+
+                                                             Page 14
+                         COSMIC documentation for LOOK
+
+
+
+
+                          IMPLEMENTATION INSTRUCTIONS
+                          ---------------------------
+
+              The program requires no special facilities or privileges
+         to  operate.    This makes installation a simple matter of
+         copying the image file (LOOK.EXE) from the distribution tape
+         into  some directory.  Plus, of course, making its existance
+         known  to the users, easily done through the definition of a
+         foreign command in a public LOGIN.COM file.
+
+              The  only aspect of the program that there may be some
+         need  to  change  is that of the default logical names (of
+         devices) that are searched for a definitions file (at program
+         startup).  These are currently set to JPL, CIT, and SYS2.
+
+              The  applicable  code  is located in the module LOOK
+         (source code in LOOK.SFI (CFG Structured FORTRAN) or LOOK.FOR
+         (FORTRAN)), in the procedure MAIN_DIR_SEARCH.  This procedure
+         is at lines 756-778 of the FORTRAN source, and lines 683-701
+         of  the CFG Structured FORTRAN source.  The three statements
+         changing  the value of the character variable SYMFIL need to
+         be changed to use whatever logical names are desired.
+
+              After changing the logical names the module (LOOK) needs
+         to  be re-compiled, replaced in the library (LOOK.OLB), and
+         the  program  re-linked.  The proper statement to link the
+         program  (assuming  that  all  modified modules have been
+         replaced in the library LOOK.OLB) is:
+
+                 LINK  LOOK/INCLUDE=LOOK/LIBRARY
+
+                                                             Page 15
+                         COSMIC documentation for LOOK
+
+
+
+
+                            SAMPLE INPUT AND OUTPUT
+                            -----------------------
+
+         "Command" mode input examples
+         -----------------------------
+
+              Below  are  some  command level commands, along with
+         descriptions of what function they would perform.
+
+              SET BOX
+                      This  will set the terminal display mode
+                   to  include a horizontal line to divide the
+                   displayed text from the command line.
+
+              SET NOWIDE
+                      This  will set the terminal display mode
+                   to  80  columns  wide.  Including, if the
+                   terminal  is a VT100, changing the terminal
+                   from 132 to 80 column mode if necessary.
+
+              SE NA
+                      This  will set the terminal display mode
+                   to  80  columns  wide.  Including, if the
+                   terminal  is a VT100, changing the terminal
+                   from  132  to 80 column mode if necessary.
+                   Note  the use of abbreviations (SE for SET
+                   and NA for NARROW).
+
+              @COMMANDS.NEW
+                      This will input the file COMMANDS.NEW as
+                   a definitions file.  The file is assumed to
+                   be in the default directory.
+
+              @OTHER_DISK:[STUFF]COMMANDS.NEW
+                      This  will  input the file COMMANDS.NEW
+                   from  the  directory STUFF on the logical
+                   device OTHER_DISK, as a definitions file.
+
+              HELP ^
+                      This will output help information on the
+                   command primitive ^ (the search command).
+
+              H
+                      This  will  output a list of items upon
+                   which  help  can  be  obtained (H is an
+                   abbreviation of HELP).
+
+              SHOW
+                      This  will output a list of all defined
+                   symbols.    Each  definition will be in a
+                   format  similiar to that used in the DEFINE
+                   command,  with the exclusion of the keyword
+                   DEFINE.   If executed with only the default
+
+                                                             Page 16
+                         COSMIC documentation for LOOK
+
+
+
+
+                   symbol  definitions in affect it will give
+                   the following output:
+                        U := 23$
+                        D := -23$
+                        S := #
+                        Q := (
+                        J := 20%
+                        B := -20%
+                        P := 23&
+                        A := 23-&
+                        L := 23--&
+                        E := @
+                        M := *
+                        C := +
+                        R := <
+
+              SH A
+                      Will  output  the definition (SH is an
+                   abbreviation  of SHOW) of the symbol A.  If
+                   there is none the line:
+                      A :=
+                   will be output.
+
+              SPAWN
+                      This  will start (or at least attempt to
+                   start)  a sub-process and attach the users
+                   terminal  to  it.   This would allow the
+                   current user to run at the DCL level without
+                   leaving  the  LOOK  image.  This could be
+                   useful  for  deleting LOOKPRINT.LIS files,
+                   reading mail, etc..  After the user is done
+                   with DCL the LOGOUT command will return the
+                   user to the command level of LOOK.
+
+              READ
+                      This  will  output  the  text of any
+                   broadcast messages that have been received,
+                   yet not seen.
+
+              DEFINE S := 35$
+                      This  will define the symbol S to be the
+                   command  35$.    If  there is a previous
+                   definition of S it will be forgotten.
+
+              DEF A := 20% "STRING"^S
+                      This will define the symbol A (DEF is an
+                   abbreviation of DEFINE) to be the series of
+                   commands 20% followed by "STRING"^ followed
+                   by the definition of the symbol S.
+
+              EXIT
+                      This will return the user into the normal
+                   "look" mode of the program.
+
+                                                             Page 17
+                         COSMIC documentation for LOOK
+
+
+
+
+         "Look" mode input examples
+         --------------------------
+
+              The  following  are  some examples of the use of the
+         primitive commands.  After each sample line a description of
+         the resulting operation(s) is given.
+
+              40$
+                      This  will  advance  the display by 40
+                   lines.   Note that these are display lines,
+                   and not necessarily records of the file (the
+                   difference  would be due to the presence of
+                   carriage-control).
+
+              -20%
+                      This  will  move the display 20 blocks
+                   towards  the  beginning  of the file.  A
+                   "block"  refers to a block of disk storage
+                   (512 bytes).
+
+              "THIS" 'THAT' 'OTHER' ^
+                      This will clear the search buffer of any
+                   previous  strings,  and  load it with the
+                   strings THIS, THAT, and OTHER.  After which
+                   a search (forward) will be undertaken for a
+                   match of any of them.
+
+              'NEW *&^%$ STRING'
+                      This  will  add  the string "NEW *&^%$
+                   STRING"  (without the delimiting quotes) to
+                   the search buffer.
+
+              1.5) #
+                      This  will  set the scrolling speed to
+                   (approximately)  1.5  lines per second and
+                   start scrolling forward through the file.
+
+              -#
+                      This  will  start  scrolling backwards
+                   (towards the beginning) of the file.  During
+                   this  operation  text will scroll down the
+                   terminal.
+
+              +
+                      This  will re-output the contents of the
+                   screen.
+
+              -3"STRING"^
+                      This  will  clear the search buffer and
+                   place  the string STRING into it.  It will
+                   then search backward (towards the beginning
+                   of the file) for the string 3 times.
+
+                                                             Page 18
+                         COSMIC documentation for LOOK
+
+
+
+
+              "STRING"-^ <<
+                      This  will  do  the same thing as the
+                   previous  example: clear the search buffer
+                   and  place the string STRING into it, then
+                   search  backward (towards the beginning of
+                   the file) for the string 3 times.
+
+              20&
+                      This  will  print  the first 20 lines
+                   displayed  on  the  screen to the device
+                   SYS$PRINT.
+
+              5--&
+                      This  will  output  the first 5 lines
+                   displayed  on  the  screen to a new file
+                   LOOKPRINT.LIS in the default directory.
+
+              *
+                      This  will  mark  the top line of the
+                   display as one of the ends of a print range.
+                   The other end will be given by the previous
+                   (or next) mark (*) command.
+
+              * 100* -&
+                      This  will mark a print range consisting
+                   of  the top of the display plus the next 99
+                   lines.   The range will then be appended to
+                   the  end  of the file LOOKPRINT.LIS in the
+                   current  default  directory  (unless  no
+                   previous -& or --& command has been issued,
+                   in which case a new version of LOOKPRINT.LIS
+                   will be created).
+
+              "SEARCH STRING" ^Z
+                      This  will  clear the search buffer and
+                   place the string SEARCH STRING in it.  Then
+                   command mode will be entered (^Z represents
+                   the single character caused by holding down
+                   the CTRL key and typing a Z).  When command
+                   mode is exitted the command line
+                      "SEARCH STRING"
+                   will be displayed.
+
+              !
+                      This  will  toggle the reverse switch.
+                   Making  all  operations happen in reverse
+                   (forward)  if they were previously forward
+                   (in reverse).
+
+              @
+                      This  will  exit  the program.  If the
+                   terminal  is a VT100 it will be returned to
+                   the  column mode (80 or 132) it was in upon
+                   program startup (as determined by the WIDTH
+
+                                                             Page 19
+                         COSMIC documentation for LOOK
+
+
+
+
+                   the  terminal  is set to, if >80 then the
+                   terminal will be placed in 132 mode.
+
+              -99999% 201%
+                      This will place the display at the first
+                   line  contained  in block 202 of the file.
+                   This happens since the move of -99999 blocks
+                   should place the display at the start of the
+                   file  (by  attempting  to move beyond the
+                   beginning), at which point the display will
+                   be advanced 201 blocks.
+
+                                                             Page 20
+                         COSMIC documentation for LOOK
+
+
+
+
+                         ENVIRONMENTAL CHARACTERISTICS
+                         -----------------------------
+
+              The  program is designed to run on a DEC VAX-11 running
+         the VMS operating system.  Though developed for a VAX-11/780
+         there should be no problem with running the program on any of
+         the machines of the VAX family.  Any display terminal can be
+         used  as  long as it is integrated into the screen support
+         package of the run-time library, though the program supports
+         many features unique to a VT100.
+
+              The program operates at interactive speeds, faster than
+         most editors.  The only significant processing delays should
+         be  for  the  execution of large line moves, searches for
+         strings  which  are  not in the immediate vicinity of the
+         display, or the output of large numbers of lines (with one of
+         the  & primitives).  In other cases speed should be limitted
+         to the baud rate of the terminal port.  Note that block moves
+         (%  primitive)  should  all be approximately the same time
+         (fast) regardless of the number of blocks jumped.
+
+              The source is written in a combination of Caine, Farber,
+         &  Gordon  Structured FORTRAN, and VAX-11 MACRO-32.  Files
+         having  the extension .SFI being CFG Structured FORTRAN, and
+         .MAR  being  VAX-11  MACRO-32.    For those without the
+         appropriate pre-processor for the CFG Structured FORTRAN, the
+         resultant (standard) FORTRAN code is included (files with the
+         extension  .FOR)  along  with  the CFG Structured FORTRAN
+         listings  (extension  .SFL).
+
+                                                             Page 21
+                         COSMIC documentation for LOOK
+
+
+
+
+                            ADDITIONAL INFORMATION
+                            -----------------------
+
+              The source files contain comments based upon an overall
+         commenting  scheme.    In this scheme each module contains
+         comments which are identified by a series of codes in columns
+         2-6  (column  1  is  reserved  for the language comment
+         delimitter, semi-colon (;) for MACRO and C for FORTRAN).  The
+         general format is:
+                 (1)   (L)    (15)                          (80)
+                  :     :       :                             :
+                  CHH.. NNNNNNNNTTTTTTTTTTT . . . . TTTTTTTTTTT
+
+              where C        is the appropriate comment delimitter.
+                    HH..     is  a  one (or more) one- or two-letter
+                             flags indicating the type of comment.
+                    NNNNNNNN is  an  8-character module or variable
+                             name.    There  are cases of this name
+                             extending  beyond  the  allowed  8
+                             characters,  though  this  technically
+                             should not be allowed.  In such cases the
+                             following  text field (TTT...TTT) begins
+                             after the first single blank space.   If
+                             this name field is blank, the comment is
+                             considered  to be a continuation of the
+                             previous one.
+                    TTT .. T is the descriptive text (comment).
+                    L        must  be  no larger than 7.  It may be
+                             smaller,  as  long as there is 1 space
+                             between  the flag(s) HH and the start of
+                             the name NNNNNNNN.
+
+              At present, the following flags are implemented:
+
+                 1.  DESCRIPTIVE COMMENTS (D)
+
+                     General  description of this module.  With this
+                     flag the name field (NNNNNNNN) is not used and is
+                     considered part of the text (TTTTTT....).
+
+                 2.  CALLS (C)
+
+                     Signifies a module that is called by this module.
+                     NNNNNNNN  being the name of the called module's
+                     entry point.
+
+                 3.  ENTRIES (E)
+
+                     Signifies  an  entry  point into this module.
+                     NNNNNNNN  is the name of the entry point.  Often
+                     the primary entry point is not given a comment.
+
+                                                             Page 22
+                         COSMIC documentation for LOOK
+
+
+
+
+                 4.  COMMON STORAGE (S)
+
+                     Signifies  an area of common storage accessed by
+                     this module.  NNNNNNNN is the COMMON area's name.
+
+                 5.  PROCEDURES (P)
+
+                     Signifies  a structured FORTRAN procedure.  This
+                     is  another  case  in  which  the name field
+                     (NNNNNNNN) is not used and is considered part of
+                     the  text (TTT...).  Unlike other comment types
+                     which  may  appear anywhere in the source code,
+                     these  comments  must  directly  follow  the
+                     "PROCEDURE" statement.
+
+                 6.  INPUT VARIABLES (I)
+
+                     Signifies a variable that receives input in this
+                     module.  NNNNNNNN is the name of the variable.
+
+                 7.  OUTPUT VARIABLES (O)
+
+                     Signifies  a  variable  that is output in this
+                     module.  NNNNNNNN is the name of the variable.
+
+                 8.  INPUT/OUTPUT VARIABLES (IO)
+
+                     Signifies  a variable that receives input and is
+                     output  in this module.  NNNNNNNN is the name of
+                     the variable.
+
+                 9.  INPUT UNITS (R)
+
+                     Signifies a unit which is used for input in this
+                     module.  NNNNNNNN is the name of the unit.  This
+                     is (generally) a FORTRAN unit number (variable or
+                     constant)  or the name of an RMS structure in a
+                     MACRO source files.
+
+                 10. OUTPUT UNITS (W)
+
+                     Signifies a unit which is used for output in this
+                     module.  NNNNNNNN is the name of the unit.  This
+                     is (generally) a FORTRAN unit number (variable or
+                     constant)  or  the name of an RMS structure in
+                     MACRO source files.
+
+                 11. INPUT/OUTPUT UNITS (RW)
+
+                     Signifies a unit which is used for both input and
+                     output  in this module.  NNNNNNNN is the name of
+                     the  unit.   This is (generally) a FORTRAN unit
+                     number  (variable or constant) or the name of an
+                     RMS structure in MACRO source files.
+
+                                                             Page 23
+                         COSMIC documentation for LOOK
+
+
+
+
+
+                 12. OPERATING INFORMATION (M)
+
+                     Relates  information as to how the module works
+                     and  how  it  should be used.  Such things as
+                     calling  sequence,  algorithm  used, and side
+                     effects are included in this category.
+
+                 13. MISCELLANEOUS
+
+                     Comments which contain no flag characters or flag
+                     characters  not  included in the above list are
+                     miscellaneous comments.  Usually describing some
+                     aspect  of  program  flow.   They are used as
+                     comments  would "normally" be used in the given
+                     source  language.  In line comments are included
+                     in this category.
