@@ -1,0 +1,24 @@
+BLOCK.PAS                       168
+CONVERT.PAS                    1830
+CURVE.PAS                       960
+DESCF.PAS                       707
+EDIT.PAS                        715
+FCN.PAS                        1109
+FCNEVAL.PAS                     468
+FCNIO.PAS                       507
+FCNOPER.PAS                     651
+FREQR.PAS                       431
+JENKINS.PAS                     711
+LOCUS.PAS                       599
+LONGREAL.PAS                    138
+MAIN.PAS                        206
+MISC.PAS                        951
+OLDFCN.PAS                      165
+PLOT.PAS                       2387
+POLYMATH.PAS                    587
+QZ.PAS                          191
+SCREENEDIT.PAS                  602
+TIMER.PAS                       572
+UTIL.PAS                        267
+
+Total PAS Files               14922

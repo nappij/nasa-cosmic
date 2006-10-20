@@ -1,0 +1,472 @@
+
+
+
+              ***********
+           ***           ***
+         **                 *                                                          
+        *                    *                                                          *****
+       *                 *********************************************************      *   *
+      *                                                                         **   ****   ****
+      *                                                                      ***  ***   *   *   ***
+      *                                                                   ***   **      *   *      **
+       *                                                              ****      * ***           *** *
+    *** *                                                          ***          *    ***********    *
+  **      *                                                    ****             *                   *
+ *                                                         ****                 *                   *
+*                                                      ****                     *                   *
+*                                                  ****                         *                   *
+*                                              ****                             *                   *
+*                                          ****                                 *                   *
+ *                                     ****                                     *                   *
+ *                                 ****                                         *                   *
+  *                            ****                                             *                   *
+   *                       ****  *                                              *                   *
+    ***            *              *                                             *                   *
+       ****     ***               *                                             *                   *
+           *****                 *                                              *                   *
+             *                  *                                               *                   *
+              *               **                                                *                   *
+               **          ***                                                  *                   *
+                 **********                                                     *                   *
+                 **                                                             *                   *
+                *  *                                                            *                   *
+               *                                                                *                   *
+             ***                                                                *                   *
+   *******  *   *                                                               **                 **
+ **       **    *                                                                 ***           ***
+*           *  *                                                                     ***********
+*   *    * * **                                
+ ********* *
+ *    *    *
+*     *     *
+*     *     *          BBBBBB      UU    UU    GGGGGG     OOOOOO    UU    UU   TTTTTTTT 
+                       BBBBBB      UU    UU   GGGGGGGG   OOOOOOOO   UU    UU   TTTTTTTT
+                       BB   BB     UU    UU   GG    GG   OO    OO   UU    UU      TT
+                       BB   BB     UU    UU   GG         OO    OO   UU    UU      TT
+                       BBBBBB      UU    UU   GG         OO    OO   UU    UU      TT
+                       BBBBBB      UU    UU   GG   GGG   OO    OO   UU    UU      TT
+                       BB   BB     UU    UU   GG   GGG   OO    OO   UU    UU      TT
+                       BB    BB    UU    UU   GG    GG   OO    OO   UU    UU      TT
+                       BB   BB     UU    UU   GG    GG   OO    OO   UU    UU      TT
+                       BBBBBB      UUUUUUUU   GGGGGGGG   OOOOOOOO   UUUUUUUU      TT
+                       BBBBBB       UUUUUU     GGGGGG     OOOOOO     UUUUUU       TT
+
+
+
+
+ ***************************************************************************************************
+ *                                                                                                 *
+ *         ------  CALLS                                VERSION II.4 (APRIL 22 1985) ------        *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                             SAMPLE.FOR;4         30-JUL-1985 12:55                              *
+ *                   ------   STATUS OF DATA SET AS OF 13:06 30-JUL-85  ------                     *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                                                                                                 *
+ *             OPTIONS = CALLS, NOMAPCALLS, SORT, PRINT=1, SAVENAME='CALSAVE.DAT         '         *     
+ *                                                                                                 *
+ *                ------   1412 CARDS READ                                     ------              *
+ *                                                                                                 *
+ ***************************************************************************************************
+ *                                                                                                 *
+ *                 ------     1 ERRORS DETECTED                               ------               *
+ *                                                                                                 *
+ ***************************************************************************************************
+
+ PROGRAM CURFIT 
+      CALL INITL  
+      CALL GETCOM 
+      CALL DOCOM  
+
+ SUBROUTINE INITL  
+0******* ERROR AT LINE NUMBER    135 , DISAGREEMENT BETWEEN SUBROUTINE AND CALL
+ *******        FOR SUBPROGRAM INITL  
+ *******        SUBROUTINE STATEMENT    =   1
+ *******        PREVIOUS CALL STATEMENT =   0
+      CALL ERRMES 
+
+ SUBROUTINE GETCOM 
+      CALL MPAGE  
+      CALL FIRST  
+      CALL MBELL  
+
+ SUBROUTINE DOCOM  
+      CALL INPUT  
+      CALL EDIT   
+      CALL FIT    
+      CALL SAVE   
+      CALL LOAD   
+      CALL MPAGE  
+
+ SUBROUTINE LOAD   
+      CALL ERRMES 
+      CALL ERRMES 
+
+ SUBROUTINE SAVE   
+      CALL ERRMES 
+      CALL ERRMES 
+
+ SUBROUTINE FIT    
+      CALL ERRMES 
+      CALL MPAGE  
+      CALL FIRST  
+      CALL CAPS   
+      CALL MPAGE  
+      CALL ERRMES 
+      CALL ERRMES 
+      CALL ERRMES 
+      CALL ERRMES 
+      CALL ERRMES 
+      CALL GAUSS  
+      CALL ERRMES 
+      CALL OUTPUT 
+
+ SUBROUTINE EDIT   
+      CALL ERRMES 
+      CALL RNAE2  
+      CALL ERRMES 
+
+ SUBROUTINE INPUT  
+      CALL YESNO  
+      CALL GETOKE 
+      CALL RIGHT  
+      CALL GETOKE 
+      CALL RIGHT  
+      CALL MBELL  
+      CALL ERRMES 
+      CALL ERRMES 
+
+ SUBROUTINE OUTPUT 
+      CALL TK4014 
+      CALL NOCHEK 
+      CALL PAGE   
+      CALL PHYSOR 
+      CALL AREA2D 
+      CALL HEADIN 
+      CALL HEADIN 
+      CALL HEADIN 
+      CALL GRAF   
+      CALL FRAME  
+      CALL CURVE  
+      CALL CURVE  
+      CALL ENDPL  
+      CALL CLEAR  
+
+ FUNCTION PHI    
+
+ SUBROUTINE MPAGE  
+      CALL CLEAR  
+
+ SUBROUTINE GAUSS  
+
+ SUBROUTINE ERRMES 
+      CALL MBELL  
+
+
+ ***************************************************************************************************
+ *                                                                                                 *
+ *      ------  TRACER                                     VERSION II.1    15 JUNE 1984  ------    *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                             SAMPLE.FOR;4         30-JUL-1985 12:55                              *
+ *                   ------  PROGRAM INSTRUMENTED AT 13:06 30-JUL-85  ------                       *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                             OPTIONS =   TIME, NOTRACE, UNIT=6                                   *
+ *                                                                                                 *
+ ***************************************************************************************************
+
+
+
+
+
+
+
+                              *****                                *****
+                              *****  AN INSTRUMENTED PROGRAM HAS   *****
+                              *****  BEEN CREATED AS "BUGOUT.FOR"  *****
+                              *****  AND COMPILED TO "BUGOUT.OBJ". *****
+                              *****  YOU MUST LINK AND RUN IT TO   *****
+                              *****  GET YOUR TIME/TRACE INFO.     *****
+                              *****                                *****
+1
+
+
+ ***************************************************************************************************
+ *                                                                                                 *
+ *      ------  COMMON                                       VERSION I.3    6 MARCH 85  ------     *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                             SAMPLE.FOR;4         30-JUL-1985 12:55                              *
+ *                   ------  STATUS OF DATA SET AS OF 13:06 30-JUL-85   ------                     *
+ *                                                                                                 *
+ *                                                                                                 *
+ *             OPTIONS = COMMON, NOMAPCOMMON, SORT, PRINT=1, SAVENAME='COMSAVE.DAT         '       *     
+ *                                                                                                 *
+ *                      ------  NUMBER OF SUBPROGRAMS CHECKED =  18  ------                        *
+ *                                                                                                 *
+ *                      ------  NUMBER OF COMMON BLOCKS FOUND =   3  ------                        *
+ *                                                                                                 *
+ ***************************************************************************************************
+ *                                                                                                 *
+ *                      ------  NUMBER OF ERRORS FOUND        =   7  ------                        *
+ *                                                                                                 *
+ ***************************************************************************************************
+      FITCOM
+ SUBPROGRAM CURFIT
+
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =       9                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+      DATCOM
+ SUBPROGRAM INITL 
+
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =       9                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+ SUBPROGRAM GETCOM
+
+      FITCOM
+ SUBPROGRAM DOCOM 
+
+      DATCOM
+ SUBPROGRAM LOAD  
+
+      DATCOM
+ SUBPROGRAM SAVE  
+
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =       9                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+      DATCOM
+ SUBPROGRAM FIT   
+
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =       9                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+      DATCOM
+ SUBPROGRAM EDIT  
+
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =       9                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+      DATCOM
+ SUBPROGRAM INPUT 
+
+      DATCOM
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =     409                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+ SUBPROGRAM OUTPUT
+
+ SUBPROGRAM PHI   
+
+      FITCOM
+ ******************************************************
+ *                                                    *
+ *  ERROR... COMMON BLOCK LENGTH DISAGREEMENT...      *
+ *                                                    *
+ *  FITCOM DEFINED LENGTH  =       9                  *
+ *         PREVIOUS LENGTH =      13                  *
+ *                                                    *
+ ******************************************************
+
+
+ SUBPROGRAM MPAGE 
+
+ SUBPROGRAM GAUSS 
+
+ SUBPROGRAM ERRMES
+
+      QQCOM 
+ SUBPROGRAM QQINIT
+
+      QQCOM 
+ SUBPROGRAM QQIN  
+
+      QQCOM 
+ SUBPROGRAM QQOUT 
+
+      QQCOM 
+ SUBPROGRAM QQSUM 
+
+      QQCOM 
+1
+
+
+          COMMON NAME                SIZE
+          ------ ----               ------
+
+
+            FITCOM                      13
+            DATCOM                    8004
+            QQCOM                      764
+1
+
+
+
+
+ ***************************************************************************************************
+ *                                                                                                 *
+ *           ------ VARIABLES                           VERSION I.0 (27 JULY 1985) ------          *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                             SAMPLE.FOR;4         30-JUL-1985 12:55                              *
+ *                  ------       STATUS OF DATA SET AS OF 13:07 30-JUL-85       ------             *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                                                                                                 *
+ *                    OPTIONS =  VARIABLES, NOFIRST, NOMAPVARIABLES                                *
+ *                                                                                                 *
+ *                                                                                                 *
+ ***************************************************************************************************
+
+
+ CURFIT    
+
+
+ INITL     
+ --- Error, ISTART      is referenced only once.
+
+
+ GETCOM    
+ --- Error, I           is referenced only once.
+
+
+ DOCOM     
+
+
+ LOAD      
+
+
+ SAVE      
+
+
+ FIT       
+ --- Error, BEGINR      is referenced only once.
+ --- Error, BEGINR      appears to be uninitialized.
+ --- Error, GENIUS      is referenced only once.
+ --- Error, GENIUS      appears to be uninitialized.
+ --- Error, XPERT       is referenced only once.
+ --- Error, XPERT       appears to be unused.
+
+
+ EDIT      
+ --- Error, Label 920'        is only referenced once.
+
+
+ INPUT     
+
+
+ OUTPUT    
+
+
+ PHI       
+
+
+ MPAGE     
+
+
+ GAUSS     
+
+
+ ERRMES    
+
+
+ QQINIT    
+ --- Error, ITIME       appears to be unused.
+ --- Error, ITIME       appears to be uninitialized.
+ --- Error, STATUS      appears to be unused.
+ --- Error, STATUS      appears to be uninitialized.
+
+
+ QQIN      
+ --- Error, ITIME       appears to be unused.
+ --- Error, ITIME       appears to be uninitialized.
+ --- Error, NPRINT      appears to be uninitialized.
+ --- Error, STATUS      appears to be unused.
+ --- Error, STATUS      appears to be uninitialized.
+
+
+ QQOUT     
+ --- Error, ITIME       appears to be unused.
+ --- Error, ITIME       appears to be uninitialized.
+ --- Error, NPRINT      appears to be uninitialized.
+ --- Error, STATUS      appears to be unused.
+ --- Error, STATUS      appears to be uninitialized.
+ --- Error, TOTAL       appears to be unused.
+ --- Error, TOTAL       appears to be uninitialized.
+
+
+ QQSUM     
+ --- Error, I           appears to be unused.
+ --- Error, I           appears to be uninitialized.
+ --- Error, ITIME       appears to be unused.
+ --- Error, ITIME       appears to be uninitialized.
+ --- Error, J           appears to be unused.
+ --- Error, J           appears to be uninitialized.
+ --- Error, NPRINT      appears to be uninitialized.
+ --- Error, NT          appears to be uninitialized.
+ --- Error, NUMB        appears to be unused.
+ --- Error, NUMB        appears to be uninitialized.
+ --- Error, STAR        appears to be unused.
+ --- Error, STAR        appears to be uninitialized.
+ --- Error, STATUS      appears to be unused.
+ --- Error, STATUS      appears to be uninitialized.
+ --- Error, TOTAL       appears to be unused.
+ --- Error, TOTAL       appears to be uninitialized.
+ --- Error, Label 5           is only referenced once.
+ --- Error, Label 10          is only referenced once.
+ --- Error, Label 900'        is only referenced once.
+ --- Error, Label 930'        is only referenced once.
+ --- Error, Label 940'        is only referenced once.
+ --- Error, Label 945'        is only referenced once.

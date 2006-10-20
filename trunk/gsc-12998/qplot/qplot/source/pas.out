@@ -1,0 +1,31 @@
+COLOR.PAS                       560
+COMPLEX.PAS                     187
+DIRECTORY.PAS                   160
+FIG.PAS                         239
+FONT.PAS                         15
+GENERAL.PAS                      62
+HANDLER.PAS                     100
+HARDIO.PAS                       56
+IO.PAS                          147
+IOBASE.PAS                      334
+IO_IMP.PAS                      774
+MAKEHARD.PAS                    137
+MAKETERM.PAS                    261
+MATH.PAS                        126
+PANEL.PAS                        50
+PLOT.PAS                       1817
+PLOT3D.PAS                      112
+ROTATION.PAS                    291
+STANDARD.PAS                    103
+STARLETQ.PAS                    322
+STRING.PAS                      250
+TERMIO.PAS                      319
+TERM_4010.PAS                   272
+TERM_4100.PAS                   208
+TERM_ANSI.PAS                   243
+TERM_CHAR.PAS                    41
+TERM_REGIS.PAS                  166
+TERM_VAX.PAS                    141
+UTILITIES.PAS                   797
+
+Total PAS Files                8290
