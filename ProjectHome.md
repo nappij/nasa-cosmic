@@ -1,0 +1,3 @@
+NASA was one of the first labs to share the code developed internally; it was done through a web portal called COSMIC at the University of Georgia. COSMIC was closed down in 1998, but I found a set of boxed cdrom from the long-gone Pacific Hi-Tech with a more or less complete set of source code directories.
+It contains mainly fortran 77 codes, some of which may be of interest to engineers.
+Packages were obtained "as is" by pacific hi-tec, and it seems that they were distributed as public domain after payment of copying costs.
